@@ -126,13 +126,10 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     load_url = Select_Url(event.message.text)
-    if load_url == 'NG':
-        event_info_text = 'NG'
-    else:
-        event_info_text = ScrapInfo(event.message.text, load_url)
+    event_info_text = ScrapInfo(event.message.text, load_url)
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event_info_text))
+        TextSendMessage(text=load_url))
 
 if __name__ == "__main__":
     app.run()
