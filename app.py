@@ -90,8 +90,8 @@ def ScrapInfo(prefecture, load_url):
         # ここでイベントのURLを格納
         info_list.append(detail_url_list[i])
         
-        # 
-        # info_list.pop(0)
+        # インデント番号0と1が同じ情報のため削除
+        info_list.pop(0)
         
         ## 情報の種類で改行を入れる
         # プレイ形式の前に改行を入れる
