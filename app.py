@@ -8,13 +8,59 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
+import sys
 import json
 import requests
 from bs4 import BeautifulSoup
 
-def ScrapInfo(prefecture):
+app = Flask(__name__)
+
+with open('scrap.json', 'r') as f:
+    info = json.load(f)
+
+CHANNEL_ACCESS_TOKEN = info['CHANNEL_ACCESS_TOKEN']
+CHANNEL_SECRET = info['CHANNEL_SECRET']
+line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
+handler = WebhookHandler(CHANNEL_SECRET)
+
+def Select_Url(prefecture):
+    # LINEのコメントから取得した文字列でスクレイピングするURLを選択
+    load_url = 'https://realdgame.jp/ajito/'
+
+    if prefecture == '福岡':
+        load_url += 'fukuoka_tenjin/'
+    elif prefecture == '岡山':
+        load_url += 'okayama/'
+    elif prefecture == '大阪':
+        load_url += 'osaka_nazobldg/'
+    elif prefecture == '京都':
+        load_url += 'kyoto/'
+    # HPの形式が異なるため一旦保留
+    # elif prefecture == '名古屋':
+    #     load_url += ''
+    elif prefecture == '横浜':
+        load_url += 'yokohama/'
+    # 今のところ開発中？トップページにとぶ
+    # elif prefecture == '池袋':
+    #     load_url += ''
+    elif prefecture == '下北沢':
+        load_url += 'shimokitazawa/'
+    elif prefecture == '浅草':
+        load_url += 'asakusa/'
+    elif prefecture == '東新宿':
+        load_url += 'shinjuku/'
+    elif prefecture == '仙台':
+        load_url += 'sendai/'
+    elif prefecture == '札幌':
+        load_url += 'sapporo/'
+    # 該当する地名がなければシステム自体が終了
+    else:
+        sys.exit()
+
+    return load_url
+
+def ScrapInfo(prefecture, load_url):
   # Webページを取得して解析
-  load_url = 'https://realdgame.jp/ajito/fukuoka_tenjin/'
   html = requests.get(load_url)
   soup = BeautifulSoup(html.content, 'html.parser')
 
@@ -24,9 +70,11 @@ def ScrapInfo(prefecture):
       detail_url_list.append(url.find('a').get('href'))
 
   event_info = soup.find_all(class_='post-content text_area')
-  event_info = [s for s in event_info if '【' + prefecture + '】' in  s.text]
-  event_info_list = ['------------------------------\n']
+  event_info = [s for s in event_info if prefecture in  s.text]
+  event_info_list = []
   for i, element in enumerate(event_info):
+      if i == 0:
+          event_info_list.append('------------------------------\n')
       info_list = element.text.split('\n')
       info_list = [s for s in info_list if s != '']
       info_list.append(detail_url_list[i])
@@ -51,16 +99,6 @@ def ScrapInfo(prefecture):
   event_info_text = ''.join(event_info_list)
   return event_info_text 
 
-app = Flask(__name__)
-
-with open('scrap.json', 'r') as f:
-    info = json.load(f)
-
-CHANNEL_ACCESS_TOKEN = info['CHANNEL_ACCESS_TOKEN']
-CHANNEL_SECRET = info['CHANNEL_SECRET']
-line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
-handler = WebhookHandler(CHANNEL_SECRET)
-
 @app.route('/')
 def test():
     return 'OK'
@@ -83,14 +121,13 @@ def callback():
 
     return 'OK'
 
-
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-  event_info_text = ScrapInfo(event.message.text)
-  line_bot_api.reply_message(
-      event.reply_token,
-      TextSendMessage(text=event_info_text))
-
+    load_url = Select_Url(event.message.text)
+    event_info_text = ScrapInfo(event.message.text, load_url)
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=event_info_text))
 
 if __name__ == "__main__":
     app.run()
