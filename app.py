@@ -55,8 +55,7 @@ def Select_Url(prefecture):
         load_url += 'sapporo/'
     # 該当する地名がなければシステム自体が終了
     else:
-        load_url = 'NG'
-        # sys.exit()
+        sys.exit()
 
     return load_url
 
@@ -125,10 +124,10 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     load_url = Select_Url(event.message.text)
-    # event_info_text = ScrapInfo(event.message.text, load_url)
+    event_info_text = ScrapInfo(event.message.text, load_url)
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=load_url))
+        TextSendMessage(text=load_url + event_info_text))
 
 if __name__ == "__main__":
     app.run()
