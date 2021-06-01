@@ -63,8 +63,9 @@ with open('scrap.json', 'r') as f:
     info = json.load(f)
 
 CHANNEL_ACCESS_TOKEN = info['CHANNEL_ACCESS_TOKEN']
+CHANNEL_SECRET = info['CHANNEL_SECRET']
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
-handler = WebhookHandler('YOUR_CHANNEL_SECRET')
+handler = WebhookHandler(CHANNEL_SECRET)
 
 
 @app.route("/callback", methods=['POST'])
