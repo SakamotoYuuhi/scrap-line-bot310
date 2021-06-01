@@ -55,9 +55,10 @@ def Select_Url(prefecture):
         load_url += 'sapporo/'
     # 該当する地名がなければシステム自体が終了
     else:
+        print('NG')
         sys.exit()
 
-    print('OK')
+    print(load_url)
     return load_url
 
 def ScrapInfo(prefecture, load_url):
