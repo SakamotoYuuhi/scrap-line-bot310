@@ -62,40 +62,59 @@ def Select_Url(prefecture):
 def ScrapInfo(prefecture, load_url):
     # Webページを取得して解析
     html = requests.get(load_url)
+    # Webページからクローリング
     soup = BeautifulSoup(html.content, 'html.parser')
 
+    # 各イベントのURLを取得
     detail_url = soup.find_all(class_='asset-more-link')
+    # 取得したURLを格納するリストを生成
     detail_url_list = []
     for url in detail_url:
+        # aタグの中のhref属性からURLのみ取得し、リストに格納
         detail_url_list.append(url.find('a').get('href'))
 
+    # 各イベントの情報を取得
     event_info = soup.find_all(class_='post-content text_area')
+    # オンライン版以外の情報を取得するため、取得した情報に県名（prefecture）がある情報のみリストに格納
     event_info = [s for s in event_info if prefecture in  s.text]
+    # オンライン版以外の情報を取得
     event_info_list = []
     for i, element in enumerate(event_info):
+        # 情報の最初に点線を加える
         if i == 0:
             event_info_list.append('------------------------------\n')
+        # event_infoリストは改行情報があるため、これを区切りにして改行を削除
         info_list = element.text.split('\n')
+        # 空白（''）を削除
         info_list = [s for s in info_list if s != '']
+        # ここでイベントのURLを格納
         info_list.append(detail_url_list[i])
         
-        info_list.pop(0)
+        # 
+        # info_list.pop(0)
         
+        ## 情報の種類で改行を入れる
+        # プレイ形式の前に改行を入れる
         play_form = 'プレイ形式'
         n = info_list.index(play_form)
         info_list[n:n] = '\n'
         
+        # 会場は不要な情報のため削除し、改行を入れる
         place = '会場'
         n = info_list.index(place)
         info_list[n:n+2] = '\n'
         
+        # 開催日程の前に改行を入れる
         date = '開催日程'
         n = info_list.index(date)
         info_list[n:n] = ''
         
+        # １つのイベントが終わるたびに点線を入れる
         info_list.append('\n------------------------------\n')
+        # すべての文字列ごとに改行を入れる
         event_info_list.append('\n'.join(info_list))
         
+    # LINE Messaging APIではリストとして出力することができないため、文字列として変数に代入
     event_info_text = ''.join(event_info_list)
     return event_info_text 
 
@@ -123,11 +142,14 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    # 送られてきたメッセージからURLを取得
     load_url = Select_Url(event.message.text)
+    # 取得したURLからイベント情報を取得
     event_info_text = ScrapInfo(event.message.text, load_url)
+    # LINEから返すメッセージ
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=load_url + event_info_text))
+        TextSendMessage(text=event_info_text))
 
 if __name__ == "__main__":
     app.run()
