@@ -98,7 +98,6 @@ def ScrapInfo(prefecture, load_url):
         event_info_list.append('\n'.join(info_list))
         
     event_info_text = ''.join(event_info_list)
-    print('OK2')
     return event_info_text 
 
 @app.route('/')
@@ -126,7 +125,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     load_url = Select_Url(event.message.text)
-    event_info_text = ScrapInfo(event.message.text, load_url)
+    # event_info_text = ScrapInfo(event.message.text, load_url)
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=load_url))
