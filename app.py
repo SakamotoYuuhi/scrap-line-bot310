@@ -86,8 +86,8 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-  event_info_text = ScrapInfo(event.messate.text)
-  event_info_text += event.messate.text
+#   event_info_text = ScrapInfo(event.messate.text)
+#   event_info_text += event.messate.text
   line_bot_api.reply_message(
       event.reply_token,
       TextSendMessage(text='event_info_text'))
