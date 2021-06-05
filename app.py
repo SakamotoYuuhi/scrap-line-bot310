@@ -96,8 +96,9 @@ def ScrapInfo(prefecture, load_url):
         ## 情報の種類で改行を入れる
         # プレイ形式の前に改行を入れる
         play_form = 'プレイ形式'
-        n = info_list.index(play_form)
-        info_list[n:n] = '\n'
+        if play_form in info_list:
+            n = info_list.index(play_form)
+            info_list[n:n] = '\n'
         
         # 会場は不要な情報のため削除し、改行を入れる
         place = '会場'
@@ -106,8 +107,9 @@ def ScrapInfo(prefecture, load_url):
         
         # 開催日程の前に改行を入れる
         date = '開催日程'
-        n = info_list.index(date)
-        info_list[n:n] = ''
+        if date in info_list:
+            n = info_list.index(date)
+            info_list[n:n] = ''
         
         # １つのイベントが終わるたびに点線を入れる
         info_list.append('\n------------------------------\n')
