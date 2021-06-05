@@ -102,8 +102,9 @@ def ScrapInfo(prefecture, load_url):
         
         # 会場は不要な情報のため削除し、改行を入れる
         place = '会場'
-        n = info_list.index(place)
-        info_list[n:n+2] = '\n'
+        if place in info_list:
+            n = info_list.index(place)
+            info_list[n:n+2] = '\n'
         
         # 開催日程の前に改行を入れる
         date = '開催日程'
