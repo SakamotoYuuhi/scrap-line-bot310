@@ -145,14 +145,18 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    # 送られてきたメッセージからURLを取得
-    load_url = Select_Url(event.message.text)
-    # 取得したURLからイベント情報を取得
-    event_info_text = ScrapInfo(event.message.text, load_url)
+    # 送られてきたメッセージが「アジト」の場合、選択できるアジト名を返す
+    if event.message.text == 'アジト':
+        text = '・福岡\n・岡山\n・大阪\n・京都\n・横浜\n・下北沢\n・浅草\n・東新宿\n・仙台\n・札幌'
+    else:
+        # 送られてきたメッセージからURLを取得
+        load_url = Select_Url(event.message.text)
+        # 取得したURLからイベント情報を取得
+        text = ScrapInfo(event.message.text, load_url)
     # LINEから返すメッセージ
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event_info_text))
+        TextSendMessage(text=text))
 
 if __name__ == "__main__":
     app.run()
