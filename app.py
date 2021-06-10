@@ -10,14 +10,10 @@ from linebot.models import (
 )
 import os
 import sys
-import json
 import requests
 from bs4 import BeautifulSoup
 
 app = Flask(__name__)
-
-with open('scrap.json', 'r') as f:
-    info = json.load(f)
 
 CHANNEL_ACCESS_TOKEN = os.environ['SCRAP_LINEbot_CHANNEL_ACCESS_TOKEN']
 CHANNEL_SECRET = os.environ['SCRAP_LINEbot_CHANNEL_SECRET']
@@ -30,9 +26,9 @@ def Select_Url(prefecture):
 
     if prefecture == '福岡':
         load_url += 'fukuoka_tenjin/'
-    elif prefecture == '岡山': # 無反応
+    elif prefecture == '岡山':
         load_url += 'okayama/'
-    elif prefecture == '大阪': # 無反応
+    elif prefecture == '大阪':
         load_url += 'osaka_nazobldg/'
     elif prefecture == '京都':
         load_url += 'kyoto/'
