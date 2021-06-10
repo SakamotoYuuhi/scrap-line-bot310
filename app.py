@@ -8,6 +8,7 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
+import os
 import sys
 import json
 import requests
@@ -18,8 +19,8 @@ app = Flask(__name__)
 with open('scrap.json', 'r') as f:
     info = json.load(f)
 
-CHANNEL_ACCESS_TOKEN = info['CHANNEL_ACCESS_TOKEN']
-CHANNEL_SECRET = info['CHANNEL_SECRET']
+CHANNEL_ACCESS_TOKEN = os.environ['SCRAP_LINEbot_CHANNEL_ACCESS_TOKEN']
+CHANNEL_SECRET = os.environ['SCRAP_LINEbot_CHANNEL_SECRET']
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
 
