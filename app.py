@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
+# 環境変数の取得
 CHANNEL_ACCESS_TOKEN = os.environ['SCRAP_LINEbot_CHANNEL_ACCESS_TOKEN']
 CHANNEL_SECRET = os.environ['SCRAP_LINEbot_CHANNEL_SECRET']
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
@@ -61,6 +62,12 @@ def ScrapInfo(prefecture, load_url):
     html = requests.get(load_url)
     # Webページからクローリング
     soup = BeautifulSoup(html.content, 'html.parser')
+
+    # 各イベントの画像を取得
+    # img_list = soup.find_all(class_='visual_area')
+    # img_url_list = []
+    # for img in img_list:
+    #     img_url_list.append(img.find('img').get('src'))
 
     # 各イベントのURLを取得
     detail_url = soup.find_all(class_='asset-more-link')
